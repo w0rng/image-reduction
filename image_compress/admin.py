@@ -9,3 +9,8 @@ class Data(admin.ModelAdmin):
 @admin.register(models.Object)
 class Object(admin.ModelAdmin):
     list_display = ('id', 'name')
+
+
+@admin.register(models.Image)
+class Image(admin.ModelAdmin):
+    list_display = ('id', 'name', 'data', 'date', 'size', 'obj')
