@@ -1,3 +1,6 @@
 from django.contrib import admin
+from . import models
 
-# Register your models here.
+@admin.register(models.Data)
+class Data(admin.ModelAdmin):
+    list_display = ('id', 'array')

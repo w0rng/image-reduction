@@ -8,6 +8,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+CODE_SIZE = 500
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',
