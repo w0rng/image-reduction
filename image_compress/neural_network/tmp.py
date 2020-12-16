@@ -1,10 +1,10 @@
 from keras.layers import Dense, Flatten, Reshape, Input, InputLayer, LeakyReLU
 from keras.models import Sequential, Model
 import numpy as np
-import matplotlib.pyplot as plt
 from keras.layers import Lambda
 from keras import backend as K
-from keras.datasets import cifar10, cifar100
+from keras.datasets import cifar10
+from os import path
 
 
 def custom_function(input):
@@ -50,62 +50,21 @@ def build_autoencoder(img_shape, code_size):
     return encoder, decoder, autoencoder 
 
 
-(x_train_orig, y_train), (x_test_orig, y_test) = cifar10.load_data()
-encoder, decoder, autoencoder = build_autoencoder(x_train_orig.shape[1:], 500)
-autoencoder.fit(
-    x = x_train_orig, 
-    y = x_train_orig, 
-    epochs = 20, 
-    validation_data = [x_test_orig, x_test_orig]
-)
+def get_encoder_decoder_predict():
+    if not path.exists('./image_compress/neural_network/models/decoder'):
+        (x_train_orig, y_train), (x_test_orig, y_test) = cifar10.load_data()
+        encoder, decoder, autoencoder = build_autoencoder(x_train_orig.shape[1:], 500)
 
+        autoencoder.fit(
+            x = x_train_orig, 
+            y = x_train_orig, 
+            epochs = 1, 
+            validation_data = [x_test_orig, x_test_orig]
+        )
+    else:
+        from tensorflow import keras
+        decoder = keras.models.load_model('./image_compress/neural_network/models/decoder', compile=False)
+        encoder = keras.models.load_model('./image_compress/neural_network/models/encoder', compile=False)
+    predict = keras.models.load_model('./image_compress/neural_network/models/type_images')
 
-def show_image(x):
-    x = x.astype(int)
-    plt.imshow(x)
-
-
-def visualize(img, encoder, decoder):
-    code = encoder.predict(img[None])[0]
-    reco = decoder.predict(code[None])[0]
-
-    plt.subplot(1,3,1)
-    plt.title("Исходное изображение")
-    show_image(img)
-
-    plt.subplot(1,3,2)
-    plt.title("Код")
-    plt.imshow(code.reshape([code.shape[-1]//20,-1]))
-
-    plt.subplot(1,3,3)
-    plt.title("Закодированное изображение")
-    show_image(reco)
-    plt.show()
-
-
-for i in range(5):
-    img = x_test_orig[i]
-    visualize(img,encoder,decoder)
-
-
-'''
-Datas
--
-id int PK
-array list
-
-Images
--
-id int PK
-name string
-data int FK >- Datas.id
-date data
-size float
-object FK >- Objects.id
-
-Objects
--
-id int PK
-name string
-
-'''
+    return encoder, decoder, predict
