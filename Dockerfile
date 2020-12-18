@@ -1,4 +1,4 @@
-FROM python:3.8-alpine
+FROM python:3.8-slim
 
 WORKDIR /usr/src/app
 
@@ -8,6 +8,6 @@ ENV PYTHONUNBUFFERED 1
 RUN pip install --upgrade pip
 COPY ./requirements.txt .
 
-RUN pip install -r requirements.txt
+RUN pip install -r requirements.txt --no-cache-dir
 
 COPY . .
